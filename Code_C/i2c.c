@@ -17,29 +17,11 @@
 
 int fd = 0; 																		// File description (pour suivre létat du port i2c) 
 char buf[24]; 	
-
-/*
-int main(int argc, char **argv)
-{		
-	i2c_open_device(0x27); 
-	
-	buf[0] = 0;													// Command register of LCD05
-	buf[1] = 12;												// Clear screen command
-	if ((write(fd, buf, 2)) != 2) {								
-		printf("Error writing to i2c slave\n");
-		exit(1);
-	}
-
-		
-return 0; 
-
-}
- */
+char current_dev_id = 0;
 
 
 void i2c_open_device( int address )
 {
-
 	char *fileName = PORT_I2C;													// Nom du port I2C a etre tuilisé 
 	
 	if ((fd = open(fileName, O_RDWR)) < 0)		 							// Ouverture du port pour le lecture et l'écriture 
@@ -52,27 +34,31 @@ void i2c_open_device( int address )
 		printf("Unable to get bus access to talk to slave\n");
 		exit(1); 
 	}
-		
-	buf[0] = 0;																		// This is the register we want to read from
+	else 
+	{
+		buf[0] = 0;																		// This is the register we want to read from
+		current_dev_id = address; 
+	}
+	
 } 
 
 
-int i2c_write_8(int address, char data)
+int i2c_write_8(char data)
 {
 	buf[0] = data; 
 	if ((write(fd, buf, 1)) != 1) 
 	{	
-		printf("\nError writing : 8 bits \n");
-		printf("Data  \t : 0x%x \n", buf[0] & 0xff); 
-		printf("To Slave : 0x%x \n \n", address & 0xff);  
+//		printf("\nError writing : 8 bits \n");
+//		printf("Data  \t : 0x%x \n", buf[0] & 0xff); 
+//		printf("To Slave : 0x%x \n \n", current_dev_id & 0xff);  
 		return 1; 
 	}
 	else 
 	{
 		
-		printf("\nWiriting Succesfull : 8 bits \n");
-		printf("Data  \t : 0x%x \n", buf[0] & 0xff); 
-		printf("To Slave : 0x%x \n \n", address & 0xff);  
+//		printf("\nWiriting Succesfull : 8 bits \n");
+//		printf("Data  \t : 0x%x \n", buf[0] & 0xff); 
+//		printf("To Slave : 0x%x \n \n", current_dev_id & 0xff);  
 		return 0; 
 	}
 	
@@ -80,25 +66,25 @@ int i2c_write_8(int address, char data)
 }
 
 
-int i2c_write_16(int address,char reg, char data)
+int i2c_write_16(char reg, char data)
 {
 	buf[0] = reg; 
 	buf[1] = data; 
 	if ((write(fd, buf, 2)) != 2) 
 	{														
-		printf("\nError writing : 16 bits \n");
-		printf("Data 1 \t : 0x%x \n", buf[0] & 0xff); 
-		printf("data 2 \t : 0x%x \n", buf[1] & 0xff);
-		printf("To Slave : 0x%x \n \n", address & 0xff);  
+//		printf("\nError writing : 16 bits \n");
+//		printf("Data 1 \t : 0x%x \n", buf[0] & 0xff); 
+//		printf("data 2 \t : 0x%x \n", buf[1] & 0xff);
+//		printf("To Slave : 0x%x \n \n", current_dev_id & 0xff);  
 		return 1; 
 	}	
 	else 
 	{
 		
-		printf("\nWiriting Succesfull : 16 bits \n");
-		printf("Data 1 \t : 0x%x \n", buf[0] & 0xff); 
-		printf("data 2 \t : 0x%x \n", buf[1] & 0xff);
-		printf("To Slave : 0x%x \n \n", address & 0xff);  
+//		printf("\nWiriting Succesfull : 16 bits \n");
+//		printf("Data 1 \t : 0x%x \n", buf[0] & 0xff); 
+//		printf("data 2 \t : 0x%x \n", buf[1] & 0xff);
+//		printf("To Slave : 0x%x \n \n", current_dev_id & 0xff);  
 		return 0; 
 	}
 	

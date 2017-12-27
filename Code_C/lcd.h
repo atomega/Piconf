@@ -1,4 +1,4 @@
-// commands
+ // commands
 #define LCD_CLEARDISPLAY   		0x01
 #define LCD_RETURNHOME   			0x02
 #define LCD_ENTRYMODESET   		0x04
@@ -39,8 +39,19 @@
 //flags for backlight control
 #define LCD_BACKLIGHT   			0x08
 #define LCD_NOBACKLIGHT   			0x00
-#define ENABLE   						0x04 // Enable bit
-#define READ_WRITE   				0x02 // Read/Write bit
-#define REGISTER_SELECT   			0x01 // Register select bit
+#define EN								0x04 // Enable bit
+#define RW			   				0x02 // Read/Write bit
+#define RS			 		  			0x01 // Register select bit
+
+#define CMD_MODE 						0x00
+#define CHAR_MODE						0x01
+
+#define LCD_ADDRS 					0x27
 
 
+int i2c_lcd_init(int addrs); 
+void lcd_write_char( char charvalue); 
+void lcd_display_string(char line, char pos, char* charvalue); 
+void ldc_pulse_En(char data); 
+void lcd_write(char cmd, char mode); 
+void lcd_write_4bits(char data); 

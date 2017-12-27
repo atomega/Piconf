@@ -1,72 +1,97 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <errno.h>
-
+#include <linux/i2c-dev.h>
+#include <fcntl.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <sys/time.h>
 #include "lcd.h"
 #include "i2c.h"
+
+
 
 int i2c_lcd_init(int addrs)
 {
 	i2c_open_device(addrs);
-	
-	i2c_write_16(addrs,0 ,12); 
-
+	lcd_write(0x03,CMD_MODE); 
+ 	lcd_write(0x03,CMD_MODE); 
+  	lcd_write(0x03,CMD_MODE); 
+	lcd_write(0x02,CMD_MODE);  
+	lcd_write(LCD_FUNCTIONSET | LCD_2LINE | LCD_5x8DOTS | LCD_4BITMODE ,CMD_MODE); 
+	lcd_write(LCD_DISPLAYCONTROL | LCD_DISPLAYON ,CMD_MODE); 
+	lcd_write(LCD_CLEARDISPLAY ,CMD_MODE); 
+	lcd_write(LCD_ENTRYMODESET | LCD_ENTRYLEFT ,CMD_MODE); 
+	return 1; 				
 }
-/*			
-	if(addrs >= 0)
+
+
+void lcd_write_char( char charvalue)
+{	
+	lcd_write_4bits(CHAR_MODE | (charvalue & 0xF0)); 
+  	lcd_write_4bits(CHAR_MODE | ((charvalue << 4) & 0xF0)); 	
+}
+
+ 
+void lcd_display_string(char line, char pos, char* charvalue)
+{
+	char setPosition = 0;	
+	int i, S_length = 0; 
+	char buf[60];  
+	strcpy(buf, charvalue);								// Copty string into buffer with space at start for command byte	
+
+	S_length	= strlen(buf); 	
+
+	if(line == 1)
 	{
-		lcd_cmd_write (addrs, 0x03);		
-		lcd_cmd_write (addrs, READ_WRITE); // find out whta it is		
-		lcd_cmd_write (addrs, LCD_FUNCTIONSET 		| LCD_2LINE 		| LCD_5x8DOTS 	| LCD_4BITMODE	); 
-		lcd_cmd_write (addrs, LCD_DISPLAYCONTROL 	| LCD_DISPLAYON											); 
-		lcd_cmd_write (addrs, LCD_CLEARDISPLAY																		); 
-		lcd_cmd_write (addrs, LCD_ENTRYMODESET 	| LCD_ENTRYLEFT											); 
-		printf("\nINITIALIZATION WAS SUCCESFULL\n"); 			
-
-		return 1; 
+		setPosition = pos; 		
 	}
-
+	else if(line ==2)
+	{
+		setPosition = 0x40 + pos; 
+	}
+	else if(line ==3)
+	{
+		setPosition = 0x14 + pos;
+	}
+	else if(line ==4)
+	{
+		setPosition = 0x54 + pos; 
+	}
 	else 
 	{
-		printf("\nINITIALIZATION FAILED\n"); 			
-			
-		return 0; 
+		printf("\nLCD : the number of line specified are incorrect\n"); 
+		exit(1); 
+	}
+	
+	lcd_write(LCD_SETDDRAMADDR + setPosition, CMD_MODE);
+
+	for(i = 0; i < S_length; i++ )
+	{
+		lcd_write(buf[i],RS); 
 	}
 }
 
 
-
-void lcd_putc(unsigned char line, unsigned char collon, unsigned char)
+void ldc_pulse_En(char data)
 {
-		
+	i2c_write_8(data | EN | LCD_BACKLIGHT);
+	usleep(100);  
+	i2c_write_8(((data & ~EN) | LCD_BACKLIGHT));
+	usleep(500);  
 }
 
 
-void lcd_cmd_write(unsigned char value, unsigned char mode) {
-	
-	unsigned char highnib=value&0xf0;
-	unsigned char lownib	=(value<<4)&0xf0;
-   write4bits((highnib)|mode);
-	write4bits((lownib)|mode); 
-}
-
-void write4bits(unsigned char value) {
-	expanderWrite(value);
-	pulseEnable(value);
-}
-
-void expanderWrite(unsigned char data){                                        
-	
-	i2c_writeii_8( | _backlightval);
-	Wire.endTransmission();   
-}
-*/
-
-int main (void)
+void lcd_write(char cmd, char mode)
 {
- 	printf("\n\nTESTIND THE LCD\n");
-	i2c_lcd_init(0x27);  
-	exit(1);  
+	lcd_write_4bits(mode | (cmd & 0xF0)); 
+  	lcd_write_4bits(mode | ((cmd << 4) & 0xF0)); 	
 }
 
+void lcd_write_4bits(char data)
+{	
+	i2c_write_8(data | LCD_BACKLIGHT);
+	ldc_pulse_En(data); 
+}

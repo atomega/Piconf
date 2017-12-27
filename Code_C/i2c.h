@@ -26,8 +26,8 @@
 #define PORT_I2C "/dev/i2c-1" // Declaration du port a utiliser pour la communication I2C. 
 
 
-int i2c_write_16(int address,char reg, char data); 
+int i2c_write_16(char reg, char data); 
 
-int i2c_write_8(int address, char data); 
+int i2c_write_8(char data); 
 
 void i2c_open_device(int address); 
