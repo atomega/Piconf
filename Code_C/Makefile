@@ -8,9 +8,11 @@ EXEC= runlcd
 
 all : $(EXEC)
 
-$(EXEC): i2c.o lcd.o get_ip.o 
-	$(CC) -o $(EXEC) i2c.o lcd.o get_ip.o $(LDFLAGS)
+$(EXEC): main.o i2c.o lcd.o getip.o 
+	$(CC) -o $(EXEC) main.o i2c.o lcd.o getip.o $(LDFLAGS)
 
+main.o: main.c
+	$(CC) -o main.o -c main.c $(CFLAGS)
 
 i2c.o: i2c.c
 	$(CC) -o i2c.o -c i2c.c $(CFLAGS)
@@ -18,8 +20,8 @@ i2c.o: i2c.c
 lcd.o: i2c.c
 	$(CC) -o lcd.o -c lcd.c $(CFLAGS)
 
-get_ip.o: get_ip.c
-	$(CC) -o get_ip.o -c get_ip.c $(CFLAGS)
+getip.o: getip.c
+	$(CC) -o getip.o -c getip.c $(CFLAGS)
 
 clean: 
 	rm -rf *.o
