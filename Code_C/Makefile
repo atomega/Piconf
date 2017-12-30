@@ -1,30 +1,36 @@
-
+INC = /usr/include/pgsql
 
 CC=gcc 
-CFLAGS= -Wall -pedantic 
+CFLAGS= -Wall -pedantic  
 LDFLAGS= 
 EXEC= runlcd
 
 
 all : $(EXEC)
 
-$(EXEC): main.o i2c.o lcd.o getip.o 
-	$(CC) -o $(EXEC) main.o i2c.o lcd.o getip.o $(LDFLAGS)
-
+$(EXEC): main.o i2c.o lcd.o getip.o dbcomm.o 
+	$(CC) -o $@ $^ $(LDFLAGS) -lpq
+ 
 main.o: main.c
-	$(CC) -o main.o -c main.c $(CFLAGS)
+	$(CC) -o $@ -c $< $(CFLAGS)
 
 i2c.o: i2c.c
-	$(CC) -o i2c.o -c i2c.c $(CFLAGS)
+	$(CC) -o $@ -c $< $(CFLAGS)
 
-lcd.o: i2c.c
-	$(CC) -o lcd.o -c lcd.c $(CFLAGS)
+lcd.o: lcd.c
+	$(CC) -o $@ -c $< $(CFLAGS)
 
 getip.o: getip.c
-	$(CC) -o getip.o -c getip.c $(CFLAGS)
+	$(CC) -o $@ -c $< $(CFLAGS)
+
+#dbcomm.so: dbcomm.o
+#	gcc -shared -o dbcomm.so dbcomm.o
+
+dbcomm.o: dbcomm.c
+	$(cc) -c -I/usr/local/pgsql/include dbcomm.c
 
 clean: 
-	rm -rf *.o
+	rm -rf *.o *.so
 
 cleanall: 
-	rm -rf *.o $(EXEC)
+	rm -rf *.o .so $(EXEC)
