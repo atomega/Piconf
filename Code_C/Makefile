@@ -27,7 +27,7 @@ getip.o: getip.c
 #	gcc -shared -o dbcomm.so dbcomm.o
 
 dbcomm.o: dbcomm.c
-	$(cc) -c -I/usr/local/pgsql/include dbcomm.c
+	$(CC) -c -I/usr/local/pgsql/include dbcomm.c
 
 clean: 
 	rm -rf *.o *.so

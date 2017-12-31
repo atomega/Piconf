@@ -16,6 +16,6 @@ int main()
 	lcd_display_string(1, 0, "       R-A-M      "); 
 	get_ip_eth(); 
 	get_ip_wlan(); 	
-	testDb(); 	
+//	testDb(); 	
   return 0; 
 }
