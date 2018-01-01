@@ -9,18 +9,11 @@
 // I2C avec une raspberry PI 3 
 //
 /////////////////////////////////////////////////////////
-
-
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <linux/i2c-dev.h>
 #include <fcntl.h>
-#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 
 #define PORT_I2C "/dev/i2c-1" // Declaration du port a utiliser pour la communication I2C. 

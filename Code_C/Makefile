@@ -23,9 +23,6 @@ lcd.o: lcd.c
 getip.o: getip.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
-#dbcomm.so: dbcomm.o
-#	gcc -shared -o dbcomm.so dbcomm.o
-
 dbcomm.o: dbcomm.c
 	$(CC) -c -I/usr/local/pgsql/include dbcomm.c
 
